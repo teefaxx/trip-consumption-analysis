@@ -1,0 +1,28 @@
+/* ########## CONTAINERS ########## */
+
+.buttons {
+    height: 12.5%;
+    width: 100%;
+    font-size: 0%;
+
+}
+
+.top-container {
+    height: 8%;
+    width: 100%;
+    display: flex;
+}
+
+.stats {
+    height: 100%;
+    width: 49%;
+    font-size: 9px;
+    position: relative;
+}
+
+.dropdown-user {
+    height: 100%;
+    width: 49%;
+    z-index: 100;
+    position: relative;
+}

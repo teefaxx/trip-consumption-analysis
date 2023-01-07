@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Meta information are used by the browser and search engines, but are not visible to the user per se. -->
+    <meta charset="UTF-8">
+    <meta name="description" content="This is our first basic site.">
+    <!-- The viewport is for mobile applications, and makes sure they are not displayed the same as on the desktop. -->
+    <meta name="viewport" content="width=device-width">
+
+    <title>GTA: Trip consumption Analysis - Travel History</title>
+
+    <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
+        integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
+        crossorigin="" defer></script>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+        integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+        crossorigin="" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+        integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+        crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet-src.js"
+        integrity="sha512-I5Hd7FcJ9rZkH7uD01G3AjsuzFy3gqz7HIJvzFZGFt2mrCS4Piw9bYZvCgUE0aiJuiZFYIJIwpbNnDIM6ohTrg=="
+        crossorigin=""></script>
+
+    <script src="https://unpkg.com/leaflet.gridlayer.googlemutant@latest/dist/Leaflet.GoogleMutant.js"></script>
+
+
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/feedbackpage.css">
+    <link rel="stylesheet" href="css/jquery-ui.min.css">
+    <link rel="stylesheet" href="css/jquery-ui.structure.min.css">
+    <link rel="stylesheet" href="css/jquery-ui.theme.min.css">
+
+    <!-- FONTS & ICONS-->
+    <link href="https://fonts.googleapis.com/css?family=Anton|Source+Sans+Pro" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+
+    <!-- JAVASCRIPT -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
+    <script src="js/jquery-ui.min.js" defer></script>
+    <script src="js/feedback.js" defer></script>
+
+
+</head>
+
+<body onload="onload()">
+    <div class="top-container-fb">
+        <!-- <button class="back"></button>-->
+        <button class="back" onclick="window.location='index.html'"><i class="
+            material-icons">arrow_back_ios</i></button>
+        <div id="title-fb">Travel History</div>
+        <button class="about" onclick="window.location='about.html'"><span class="material-symbols-outlined">
+                info
+            </span></button>
+    </div>
+
+    <div class="query-container-fb">
+        <div class="input-container-fb">
+            <div class="choose-date">
+                <label for="trip-date">Date: </label>
+                <input type="date" id="trip-date" name="choose_date" value="" min="2022-11-25" max="2022-12-22">
+            </div>
+            <form class="user-info-fb">
+                <label for="user-id-select-fb"> User: </label>
+                <select id="user-id-select-fb">
+                    <option value="0"> Select User </option>
+                    <option value="1">Dario</option>
+                    <option value="2">Luca</option>
+                    <option value="3">Leo</option>
+                    <option value="4">Raul</option>
+                </select>
+            </form>
+
+            <div class="query-fb">
+                <button onclick="feedback()">Show Query</button>
+            </div>
+
+        </div>
+    </div>
+    <div id="map-wrapper">
+        <div id="map" style="height: 400px;">
+            <div id="legend">
+                <p id="leg-car">--- Car</p>
+                <p id="leg-train">--- Train</p>
+                <p id="leg-bus">--- Bus</p>
+                <p id="leg-tram">--- Tram</p>
+                <p id="leg-bike">--- Bike</p>
+                <p id="leg-neu">--- Neutral</p>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="stats-container">
+        <h2>Daily Energy Consumption: </h2>
+        <div class="sum-text">
+            <p id="return-text"> Select a valid date and user first...</p>
+        </div>
+        <div class="tabelle">
+            <table id="ui_unstackable_celled_table" style="width:100%">
+                <tbody>
+                    <!--<tr>
+                    <td data-label="Attribute">Total Trips</td>
+                    <td id='tot_trips'>0</td>
+                    </tr>-->
+                    <tr>
+                        <td data-label="Attribute">Total MJ Consumption</td>
+                        <td id='mj'>0</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Attribute">Total CO2 Consumption</td>
+                        <td id="co2">0</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Attribute">Total Travel Time</td>
+                        <td id="time">0</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Attribute">Total KM traveled</td>
+                        <td id="km">0</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>

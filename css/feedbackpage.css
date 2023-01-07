@@ -1,0 +1,262 @@
+body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    min-width: 320px;
+    background: #f6fafc;
+    font-family: 'Source Sans Pro', sans-serif;
+    /*font-size: 14px;
+    line-height: 1.4285em;*/
+    color: #000000;
+}
+
+/*
+header.top-container-fb {
+    height: 100%;
+    width: 100%;
+    text-align: center;
+    font-size: 50px;
+    margin-bottom: 5%;
+    margin-top: 5%;
+}*/
+
+#user-id-select {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+
+.top-container-fb {
+    height: 20%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    background-color: #91c6fc;
+    /*margin-top: 10px;
+    margin-left: 4px;
+    margin-bottom: 10px;
+    border-bottom: 2px;
+    border-color: black;*/
+    z-index: 10;
+}
+
+
+.back {
+    height: 100%;
+    width: 15%;
+    background: #a9d4ff;
+    /* Blue background */
+    border: none;
+    /* Remove borders */
+    color: white;
+    /* White text */
+    padding: 10px;
+    font-size: 16px;
+    vertical-align: middle;
+    /*padding: 16px 16px;*/
+    /* Some padding */
+    ;
+    /* Set a font size */
+}
+
+.about {
+    height: 100%;
+    width: 15%;
+    background: #a9d4ff;
+    /* Blue background */
+    border: none;
+    /* Remove borders */
+    color: white;
+    /* White text */
+    padding: 10px;
+    font-size: 16px;
+    vertical-align: middle;
+
+}
+
+.material-icons {
+    /*width: 15%;
+    height: 100%;
+    text-align: center;*/
+    display: inline;
+    z-index: inherit;
+}
+
+/*.back {
+    background-color: #4CAF50;
+    /* Green
+    border: none;
+    color: white;
+    width: 15%;
+    height: 100%;
+
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    z-index: inherit;
+} */
+
+#title-fb {
+    width: 70%;
+    height: 100%;
+    text-align: center;
+    font-size: 25px;
+    font-weight: bolder;
+    color: white;
+
+}
+
+
+
+#legend {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: auto;
+    width: 17%;
+    margin-top: 10px;
+    margin-right: 10px;
+    padding: 10px;
+    background-color: rgba(245, 245, 245, 0.677);
+    border-radius: 10px;
+    z-index: 1000000;
+    font-weight: bolder;
+    text-align: left;
+}
+
+#leg-car {
+    color: #000000
+}
+
+#leg-train {
+    color: #FF0000;
+}
+
+#leg-bus {
+    color: #0000CC;
+}
+
+#leg-tram {
+    color: #0080FF;
+}
+
+#leg-bike {
+    color: #6600CC;
+}
+
+#leg-neu {
+    color: #0B8658;
+}
+
+/*
+#title-fb {
+    width: 70%;
+    height: 100%;
+    border: none;
+    color: whitesmoke;
+    font-weight: bold;
+    font-size: 40px;
+    background: #90c7ff;
+    padding: 0;
+    border: 0;
+    text-align: center;
+    z-index: 100;
+}
+
+*/
+.choose-date {
+    text-align: left;
+}
+
+.user-info-fb {
+    text-align: right;
+}
+
+.stats-container {
+    background-color: #e3e3e3;
+    border-radius: 12px;
+    padding-left: 2.5%;
+    padding-right: 2.5%;
+    text-align: justify;
+    margin: 2.5% 2.5%;
+}
+
+#map-wrapper {
+    position: static;
+
+    height: 90%;
+
+    /*width: 100%;
+    height: 100%;
+    position: relative;
+    border: 1px solid black;*/
+}
+
+#map {
+    position: static;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+}
+
+
+
+
+
+.query-container-fb {
+    margin-top: 5%;
+    margin-bottom: 5%;
+    height: 20%;
+    width: 100%;
+}
+
+
+
+
+.input-container-fb {
+    height: 100%;
+    width: 100%;
+    margin-top: 10%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    background-color: #f6fafc;
+}
+
+.tabelle {
+    height: 100%;
+    width: 100%;
+    font-size: 16px;
+}
+
+.user-info {
+    height: 50%;
+    width: 20%;
+    z-index: 100;
+}
+
+
+table {
+    margin-top: 10px;
+    text-align: center;
+    border-collapse: collapse;
+    border: 3px solid black;
+}
+
+td {
+    text-align: middle;
+    font-size: large;
+    border: 1.5px solid black;
+    border-collapse: collapse;
+    width: 50%;
+    padding: 5px;
+    font-size: 15px;
+}
+
+td:first-child {
+    text-align: left;
+}

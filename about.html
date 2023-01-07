@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Meta information are used by the browser and search engines, but are not visible to the user per se. -->
+    <meta charset="UTF-8">
+    <meta name="description" content="This is our first basic site.">
+    <!-- The viewport is for mobile applications, and makes sure they are not displayed the same as on the desktop. -->
+    <meta name="viewport" content="width=device-width">
+
+    <title>GTA: Trip consumption Analysis - About</title>
+
+    <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
+        integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
+        crossorigin="" defer></script>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+        integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+        crossorigin="" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+        integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+        crossorigin="" />
+
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/about.css">
+    <link rel="stylesheet" href="css/jquery-ui.min.css">
+    <link rel="stylesheet" href="css/jquery-ui.structure.min.css">
+    <link rel="stylesheet" href="css/jquery-ui.theme.min.css">
+
+    <!-- FONTS & ICONS-->
+    <link href="https://fonts.googleapis.com/css?family=Anton|Source+Sans+Pro" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+
+    <!-- JAVASCRIPT -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
+    <script src="js/jquery-ui.min.js" defer></script>
+    <script src="js/about.js" defer></script>
+</head>
+
+<body>
+    <div class="top-container">
+        <button class="back" onclick="window.location='feedback.html'"><span class="material-symbols-outlined">
+                arrow_back_ios
+            </span></button>
+        <h1 style="text-align: center;">About the App</h1>
+    </div>
+    <div class="content">
+        <div class="info">
+            <h2>Our Goal?</h2>
+            <p>The current energy crisis and climate change necessitate lowering our energy consumption and CO2
+                emissions,
+                and transportation plays a significant role in this process. This application helps users comprehend the
+                impact of their transportation choices and motivates them to make more sustainable choices by providing
+                information on their energy consumption and CO2 emissions.</p>
+        </div>
+        <div class="space">
+            <p>&nbsp;</p>
+        </div>
+        <div class="how-it-works">
+            <h2>How it works?</h2>
+            <h3>Tracking</h3>
+            <ol>
+                <li>Select the user in the top left corner.</li>
+                <li>Choose your transportation mode with and start the trip in the bottom left corner.</li>
+                <li>The app is now tracking. To switch your transportation mode, press "Switch Mode" and choose your
+                    mode.
+                </li>
+                <li>To end your trip, press the end trip button. The data will be submitted to the database.</li>
+                <li>To view your daily energy consumption and CO2 emissions, press</li>
+            </ol>
+            <h3>Feedback</h3>
+            <ol>
+                <li>Choose the date and the user. Press "Show query" to display your energy consumption and emissions
+                </li>
+                <li>The map shows your trajectory of that day</li>
+                <li>The table on the bottom of the page shows the total MegaJoule consumption, the total CO2 emissions
+                    and
+                    the total kilometrs travelled.</li>
+            </ol>
+        </div>
+        <div class="space">
+            <p>&nbsp;</p>
+        </div>
+        <div class="calc">
+            <h2>Calculations?</h2>
+            <p>To calculate energy consumption and CO2 emissions, we utilize data from <a
+                    href="https://www.mobitool.ch/" target="_blank">mobitool.ch</a>. It
+                is important to note that we use average values and the results may not perfectly reflect your actual
+                consumption and
+                emissions.</p>
+        </div>
+        <div class="space">
+            <p>&nbsp;</p>
+        </div>
+        <div class="about-us">
+            <h2> About us</h2>
+            <p> This app was developed as part of the "Geoinformationstechnologien- und analysen" course at ETH Zürich.
+                If
+                you have any questions, you can reach us via email at <a
+                    href="mailto: gta-app@triots.com">gta-app@triots.com</a>. </p>
+        </div>
+    </div>
+</body>

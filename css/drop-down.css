@@ -1,0 +1,90 @@
+/* ############ INSPIRED BY: https://www.w3schools.com/howto/howto_css_dropdown.asp ############*/
+
+
+/* ########## USER DROP-DOWN ########## */
+
+/* Dropdown Button */
+#dropbtn-user {
+    background-color: #9ec3ff;
+    color: white;
+    height: 100%;
+    width: 100%;
+    font-size: 16px;
+    border: none;
+    z-index: 1000;
+}
+
+/* The container <div> - needed to position the dropdown content */
+.dropdown-user {
+    position: relative;
+    display: inline-block;
+    z-index: 1000;
+    width: calc(100%/2);
+    margin: 0px;
+    padding: 0px;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content-user {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    font-size: 20px;
+    width: 100%;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: inherit;
+
+}
+
+/* Links inside the dropdown */
+.dropdown-content-user a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    z-index: inherit;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content-user a:hover {
+    background-color: #ddd;
+    z-index: inherit;
+}
+
+/* Show the dropdown menu on hover */
+.dropdown-user:hover .dropdown-content-user {
+    display: block;
+    z-index: inherit;
+}
+
+/* Change the background color of the dropdown button when the dropdown content is shown */
+.dropdown:hover .dropbtn-user {
+    background-color: #9ec3ff;
+    z-index: inherit;
+}
+
+/* ########## BUTTON TO FEEDBACK PAGE ########## */
+
+.dropdown-stats {
+    background-color: #4089ff;
+    position: relative;
+    width: calc(100%/2);
+    height: 100%;
+    display: inline-block;
+    z-index: 1000;
+    margin: 0px;
+    padding: 0px;
+}
+
+.dropbtn-stats {
+    background-color: #4089ff;
+    color: white;
+    width: 100%;
+    height: 100%;
+    font-size: 16px;
+    border: none;
+    z-index: 10000;
+    margin: 0px;
+    padding: 0px;
+}

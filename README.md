@@ -1,6 +1,6 @@
 # README - Trip Consumption Analysis
 
-This project was completed as part of the course ”Geoinformationstechnologien und -analysen” at ETH Zürich.
+This project was completed as a part of the course ”Geoinformationstechnologien und -analysen” at ETH Zürich.
 
 #### Contributors to the project:
 * Dario De Luca

@@ -50,7 +50,7 @@ The following table shows the users and their user_id:
 
 ## Data
 
-All the data has been processed and stored in our database. However we haven't found a way to give public access to the database.
+All the data has been processed and stored in our database. However we haven't found a way yet to give public access to the database.
 
 ## Python
 

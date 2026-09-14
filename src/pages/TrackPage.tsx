@@ -186,9 +186,13 @@ export default function TrackPage() {
       </header>
 
       <div className="relative min-h-0 flex-1">
-        <MapView>
-          <TraceLayer points={points} />
-        </MapView>
+        {/* Absolute wrapper: Mapbox needs a definite pixel height, and
+            `height: 100%` does not resolve inside a flex item. */}
+        <div className="absolute inset-0">
+          <MapView>
+            <TraceLayer points={points} />
+          </MapView>
+        </div>
 
         <TrackingBadge
           status={status}

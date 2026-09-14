@@ -6,8 +6,8 @@ import AboutPage from './pages/AboutPage'
 
 function Layout() {
   return (
-    <div className="flex min-h-svh flex-col bg-gray-50">
-      <main className="flex flex-1 flex-col">
+    <div className="flex h-dvh flex-col overflow-hidden bg-gray-50">
+      <main className="flex min-h-0 flex-1 flex-col">
         <Outlet />
       </main>
       <BottomNav />

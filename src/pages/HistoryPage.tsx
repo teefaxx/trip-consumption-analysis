@@ -52,7 +52,7 @@ export default function HistoryPage() {
   }
 
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="flex min-h-0 flex-1 flex-col">
       <header className="flex shrink-0 flex-col gap-2 border-b border-gray-200 bg-white px-4 py-3">
         <h1 className="text-lg font-semibold text-gray-900">History</h1>
         <div className="flex items-center gap-2">
@@ -95,7 +95,7 @@ export default function HistoryPage() {
         </div>
       </div>
 
-      <div className="flex flex-1 flex-col gap-3 overflow-y-auto p-4">
+      <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto overscroll-y-contain p-4">
         {deleteError && (
           <Banner tone="error" message={deleteError} onDismiss={() => setDeleteError(null)} />
         )}

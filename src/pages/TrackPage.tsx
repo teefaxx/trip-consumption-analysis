@@ -97,7 +97,7 @@ export default function TrackPage() {
   }
 
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="flex min-h-0 flex-1 flex-col">
       <header className="flex shrink-0 items-center justify-between border-b border-gray-200 bg-white px-4 py-3">
         <h1 className="text-lg font-semibold text-gray-900">Trip Consumption</h1>
         <ProfileName ref={profileNameRef} />

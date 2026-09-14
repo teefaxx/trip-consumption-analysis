@@ -14,7 +14,7 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 
 export default function AboutPage() {
   return (
-    <div className="flex flex-1 flex-col overflow-y-auto">
+    <div className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-y-contain">
       <header className="shrink-0 border-b border-gray-200 bg-white px-4 py-3">
         <h1 className="text-lg font-semibold text-gray-900">About</h1>
       </header>

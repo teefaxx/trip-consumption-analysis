@@ -346,7 +346,7 @@ Branching: each phase is committed on its own branch, branched from the previous
 - `lib/lv95.ts` + `lib/legacyCsv.ts` with tests against a synthetic WKB fixture (not real data); `LegacyImport` component on the history page.
 - Done when: yesterday's recorded trip appears on the history page with correct totals; empty days show a message.
 
-### Phase 4 — Deploy + PWA (½ day) — branch `refactor/04-deploy`
+### Phase 4 — Deploy + PWA (½ day) — branch `refactor/04-deploy` — code done 2026-09-14
 - `vite.config.ts` base path, workflow file, Pages setting, `MAPBOX_TOKEN` repo secret, `vite-plugin-pwa` with manifest + icons (exclude Mapbox tile requests from the service-worker cache).
 - Update `README.md`: live URL, how to run locally, how the numbers are computed, known mobile limitations.
 - Done when: the app installs to a phone home screen from the GitHub Pages URL and tracks a trip.
@@ -365,7 +365,9 @@ Things only the repository owner can do. Ticked off as they are done.
 
 - [x] **Decide where the refactor branches live.** Decided 2026-09-14: pushed to the public repo `teefaxx/trip-consumption-analysis` as `refactor/*` branches. `main` still holds the legacy app until the rewrite is merged.
 - [x] **Create a Mapbox public token** (done 2026-09-14, restricted to localhost and the GitHub Pages URL; map verified rendering locally) (`pk.…`) at account.mapbox.com, restrict its allowed URLs to `http://localhost:*` and the future GitHub Pages origin, and save it locally in `.env` as `VITE_MAPBOX_TOKEN=pk.…` (see `.env.example`). Without it the app runs but shows a placeholder instead of the map.
-- [ ] **Add the token as a repository secret** named `MAPBOX_TOKEN` (Settings → Secrets and variables → Actions) before Phase 4, so the GitHub Actions build can embed it.
+- [ ] **Add the token as a repository secret** named `MAPBOX_TOKEN` (Settings → Secrets and variables → Actions) so the GitHub Actions build can embed it. Without it the deployed app builds and runs but shows the map placeholder.
+- [ ] **Switch Pages to GitHub Actions** (Settings → Pages → Source: GitHub Actions). Then Settings → Environments → `github-pages` → Deployment branches: add `refactor/*` (or "No restriction"), otherwise the manual deploy of a feature branch is rejected by the environment's default `main`-only rule.
+- [ ] **Merge `refactor/04-deploy` into `main`** (open a pull request, let the checks pass, merge). This replaces the legacy app on the live URL. Phase 4 code is complete as of 2026-09-14; the branch also exists as `refactor/04-deploy-bkp50a`, identical content.
 - [ ] **Test tracking on a phone.** `navigator.geolocation` needs HTTPS, so real-GPS testing happens after the Phase 4 deploy. On the laptop the dev server works over plain HTTP at `http://localhost:5173/trip-consumption-analysis/#/`.
 - [ ] *(Optional)* **Verify the recomputed MJ factors** for car, bus and e-bike: open the mobitool v3.1 workbook linked in `docs/mobitool-factors.md` in Excel, choose "Primary energy (non-renewable)" in the indicator dropdown, and compare the "sum" column with `src/lib/factors.ts`.
 

@@ -53,6 +53,11 @@ One-time repository setup:
   origin. A URL-restricted public token is expected in a static site's client bundle;
   the restriction is what protects the quota.
 - Settings → Pages → Source: **GitHub Actions**.
+- Settings → Environments → `github-pages` → Deployment branches and tags: add a
+  rule for `refactor/*` (or choose "No restriction"). GitHub creates this environment
+  with a `main`-only rule, and without the extra rule the manual "Run workflow" deploy
+  of a feature branch fails at the deploy step with "not allowed to deploy to
+  github-pages due to environment protection rules".
 
 ## Project structure
 

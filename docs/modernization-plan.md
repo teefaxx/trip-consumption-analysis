@@ -303,6 +303,14 @@ Kept for reference in case shared history is ever wanted. Same static frontend; 
 
 Ruled out by the browser-only decision. For the record: would need a host for Flask (Render, Fly.io) plus a managed PostGIS (Neon, Supabase), secrets management, CORS done properly, and cold-start latency on free tiers. Most work, only worth it if you want to run heavier analysis server-side. Not recommended.
 
+### Branching and deployment practice (GitHub flow)
+
+- `main` is production: every push to `main` deploys to GitHub Pages. Nothing is committed to `main` directly.
+- All work happens on short-lived branches merged through pull requests. CI runs tests, type-check and build on every pull request, so `main` stays green.
+- The workflow also has a manual trigger (`workflow_dispatch`) to deploy any branch to the live URL for phone testing, followed by a redeploy of `main`. A broken merge is undone with the pull request's "Revert" button.
+- Per-pull-request preview URLs (Netlify, Vercel, Cloudflare Pages) are the next step up if manual deploys become annoying; not planned for now.
+- The `refactor/*` branches are chained feature branches; one pull request from the last of them into `main` brings the rewrite live and retires the legacy files from `main` (they stay under `legacy/`).
+
 ### Why A
 
 No shared or multi-device history is needed, so there is nothing for a backend to do. The storage interface stays so B remains a swap if that ever changes.

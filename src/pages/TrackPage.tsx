@@ -5,6 +5,8 @@ import TrackingBadge from '../components/TrackingBadge'
 import ModePicker from '../components/ModePicker'
 import TripSummarySheet from '../components/TripSummarySheet'
 import ProfileName, { type ProfileNameHandle } from '../components/ProfileName'
+import Banner from '../components/Banner'
+import ConfirmDialog from '../components/ConfirmDialog'
 import { useGeolocation } from '../hooks/useGeolocation'
 import { useTripStore } from '../store/tripStore'
 import { TripTooShortError, type ModeId, type Trip } from '../lib'
@@ -22,90 +24,6 @@ function describeGeolocationError(err: GeolocationPositionError): string {
     default:
       return err.message || 'Location error.'
   }
-}
-
-function Banner({
-  tone = 'error',
-  message,
-  actionLabel,
-  onAction,
-  onDismiss,
-}: {
-  tone?: 'error' | 'warning'
-  message: string
-  actionLabel?: string
-  onAction?: () => void
-  onDismiss: () => void
-}) {
-  const toneClasses =
-    tone === 'error'
-      ? 'bg-red-50 text-red-800 border-red-200'
-      : 'bg-amber-50 text-amber-800 border-amber-200'
-
-  return (
-    <div
-      role="alert"
-      className={`absolute inset-x-3 top-3 z-20 flex items-start gap-3 rounded-lg border px-3 py-2 text-sm shadow ${toneClasses}`}
-    >
-      <p className="flex-1">{message}</p>
-      {actionLabel && onAction && (
-        <button
-          type="button"
-          onClick={onAction}
-          className="shrink-0 rounded-md bg-white/70 px-2 py-1 text-xs font-semibold underline"
-        >
-          {actionLabel}
-        </button>
-      )}
-      <button
-        type="button"
-        onClick={onDismiss}
-        aria-label="Dismiss"
-        className="shrink-0 rounded-md px-1 text-xs font-semibold opacity-70"
-      >
-        &#10005;
-      </button>
-    </div>
-  )
-}
-
-function ConfirmDialog({
-  title,
-  message,
-  confirmLabel,
-  onConfirm,
-  onCancel,
-}: {
-  title: string
-  message: string
-  confirmLabel: string
-  onConfirm: () => void
-  onCancel: () => void
-}) {
-  return (
-    <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 p-4">
-      <div className="w-full max-w-sm rounded-2xl bg-white p-5 shadow-xl">
-        <h2 className="mb-1 text-base font-semibold text-gray-900">{title}</h2>
-        <p className="mb-4 text-sm text-gray-600">{message}</p>
-        <div className="flex gap-3">
-          <button
-            type="button"
-            onClick={onCancel}
-            className="flex-1 rounded-xl border border-gray-200 py-2.5 text-sm font-semibold text-gray-700 active:bg-gray-100"
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            onClick={onConfirm}
-            className="flex-1 rounded-xl bg-gray-900 py-2.5 text-sm font-semibold text-white active:bg-gray-800"
-          >
-            {confirmLabel}
-          </button>
-        </div>
-      </div>
-    </div>
-  )
 }
 
 export default function TrackPage() {
@@ -203,16 +121,20 @@ export default function TrackPage() {
         />
 
         {error && (
-          <Banner tone="error" message={error} onDismiss={() => setError(null)} />
+          <div className="absolute inset-x-3 top-3 z-20">
+            <Banner tone="error" message={error} onDismiss={() => setError(null)} />
+          </div>
         )}
         {tooShort && (
-          <Banner
-            tone="warning"
-            message="Trip has fewer than 2 usable points after cleaning — there isn't enough to save."
-            actionLabel="Discard trip"
-            onAction={handleDiscard}
-            onDismiss={() => setTooShort(false)}
-          />
+          <div className="absolute inset-x-3 top-3 z-20">
+            <Banner
+              tone="warning"
+              message="Trip has fewer than 2 usable points after cleaning — there isn't enough to save."
+              actionLabel="Discard trip"
+              onAction={handleDiscard}
+              onDismiss={() => setTooShort(false)}
+            />
+          </div>
         )}
       </div>
 

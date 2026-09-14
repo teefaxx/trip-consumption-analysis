@@ -1,0 +1,9 @@
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" rx="96" fill="#111827"/>
+  <path d="M118 388 C 150 336 182 318 210 298 C 238 278 248 326 256 342"
+        fill="none" stroke="#ffffff" stroke-width="18" stroke-linecap="round"
+        stroke-dasharray="2 30" opacity="0.55"/>
+  <circle cx="118" cy="388" r="14" fill="#ffffff" opacity="0.85"/>
+  <path fill-rule="evenodd" clip-rule="evenodd" fill="#ffffff"
+        d="M256 92c-62 0-112 50-112 112 0 84 112 216 112 216s112-132 112-216c0-62-50-112-112-112zm0 152a40 40 0 1 1 0-80 40 40 0 0 1 0 80z"/>
+</svg>

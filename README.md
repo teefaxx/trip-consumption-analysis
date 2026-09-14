@@ -1,5 +1,7 @@
 # README - Trip Consumption Analysis
 
+> **Rewrite in progress (September 2026).** The original 2023 app has been moved to [`legacy/`](legacy/) unchanged. The modernization plan, decisions and known bugs are in [`docs/modernization-plan.md`](docs/modernization-plan.md). The sections below describe the legacy version.
+
 This project was completed as a part of the course ”Geoinformationstechnologien und -analysen” at ETH Zürich.
 
 #### Contributors to the project:

@@ -6,7 +6,7 @@ Written 2026-09-14 after a full read of the repo (3 HTML pages, 2 JS files, 4 Py
 
 - All computation and storage moves into the browser. The Flask + PostGIS backend is retired (kept under `legacy/` for reference only).
 - Maps use **Mapbox GL JS** instead of Leaflet (see §1, "Map layer: Mapbox GL JS").
-- Default map style: **Mapbox Standard** (`mapbox://styles/mapbox/standard`).
+- Default map style: **Mapbox Streets v12** (`mapbox://styles/mapbox/streets-v12`). Changed 2026-09-14 from Mapbox Standard: on the deployed app, Standard's built-in 3D terrain requested `mapbox-terrain-dem-v1` raster tiles that Mapbox answered with 403 for this token, and the app has no use for terrain. Streets is also lighter on a phone. Switching back is the one string in `MapView.tsx`.
 - No fixed user list and no shared/multi-device history. One local profile name, stored on the device; trips live on the device that recorded them; JSON export/import moves them if needed. Hosting option B (Supabase) is not planned.
 - The 2022 data exists as a CSV export of the `tripleg` table (`DATA.csv`, 70 legs, kept outside the repo). It is imported inside the app; no Python anywhere in the new project.
 - Git: one branch per phase (`refactor/00-hygiene`, `refactor/01-scaffold-engine`, `refactor/02-tracking`, …), each branched from the previous, merged into `main` at the end. Nothing is pushed until the user says so.
@@ -136,7 +136,7 @@ trip-consumption-analysis/
 │   │   ├── HistoryPage.tsx     date + user picker, map, totals (replaces feedback.html)
 │   │   └── AboutPage.tsx
 │   ├── components/
-│   │   ├── MapView.tsx         react-map-gl <Map> wrapper: Standard style, token, GeolocateControl, NavigationControl
+│   │   ├── MapView.tsx         react-map-gl <Map> wrapper: Streets style, token, GeolocateControl, NavigationControl
 │   │   ├── TraceLayer.tsx      <Source type="geojson"> + <Layer type="line"> coloured by mode
 │   │   ├── ModePicker.tsx      one component replaces 12 copy-pasted click handlers
 │   │   ├── TrackingBadge.tsx   the blinking icon + "NOT TRACKING" text

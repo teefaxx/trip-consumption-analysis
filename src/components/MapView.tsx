@@ -56,7 +56,7 @@ export default function MapView({ children, initialViewState }: MapViewProps) {
       <Map
         mapboxAccessToken={token}
         initialViewState={{ ...DEFAULT_VIEW_STATE, ...initialViewState }}
-        mapStyle="mapbox://styles/mapbox/standard"
+        mapStyle="mapbox://styles/mapbox/streets-v12"
         reuseMaps
         style={{ width: '100%', height: '100%' }}
         onError={handleError}

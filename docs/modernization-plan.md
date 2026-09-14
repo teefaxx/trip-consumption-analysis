@@ -8,7 +8,8 @@ Written 2026-09-14 after a full read of the repo (3 HTML pages, 2 JS files, 4 Py
 - Maps use **Mapbox GL JS** instead of Leaflet (see §1, "Map layer: Mapbox GL JS").
 - Default map style: **Mapbox Standard** (`mapbox://styles/mapbox/standard`).
 - No fixed user list and no shared/multi-device history. One local profile name, stored on the device; trips live on the device that recorded them; JSON export/import moves them if needed. Hosting option B (Supabase) is not planned.
-- The 2022 PostGIS dump is assumed to exist; Phase 3 includes the migration script.
+- The 2022 data exists as a CSV export of the `tripleg` table (`DATA.csv`, 70 legs, kept outside the repo). It is imported inside the app; no Python anywhere in the new project.
+- Git: one branch per phase (`refactor/00-hygiene`, `refactor/01-scaffold-engine`, `refactor/02-tracking`, …), each branched from the previous, merged into `main` at the end. Nothing is pushed until the user says so.
 - The mobitool factors are refreshed from the current mobitool factor sheet before they go into `factors.ts`.
 - Execution: Phases 0–2 are implemented by subagents on cheaper models under review; the orchestrating session reviews the calculation engine and its tests.
 
@@ -140,8 +141,11 @@ trip-consumption-analysis/
 │   │   ├── ModePicker.tsx      one component replaces 12 copy-pasted click handlers
 │   │   ├── TrackingBadge.tsx   the blinking icon + "NOT TRACKING" text
 │   │   ├── StatsTable.tsx
-│   │   └── ProfileName.tsx     one editable name, stored in localStorage (replaces the 4-user dropdown)
+│   │   │   ├── ProfileName.tsx     one editable name, stored in localStorage (replaces the 4-user dropdown)
+│   │   └── LegacyImport.tsx    file picker for the 2022 tripleg CSV (see §3, "2022 data")
 │   ├── lib/                    PURE calculation engine, no React, fully unit-tested
+│   │   ├── legacyCsv.ts        parse DATA.csv rows: hex-WKB LineString → LV95 → WGS84 → Trip
+│   │   ├── lv95.ts             swisstopo approximate LV95 → WGS84 formula (≈ 1 m accuracy, no proj4)
 │   │   ├── types.ts            Trackpoint, Tripleg, Trip, Mode, EmissionFactor
 │   │   ├── modes.ts            mode ids, labels, colours (single source of truth, fixes C4/F2)
 │   │   ├── factors.ts          mobitool table with source + year
@@ -159,8 +163,6 @@ trip-consumption-analysis/
 │   └── store/
 │       └── tripStore.ts        zustand: profile name, mode, in-progress trackpoints
 ├── legacy/                     the current html/js/css/py moved here, untouched, for reference
-├── scripts/
-│   └── export_history.py       one-off: PostGIS dump → one importable JSON per 2022 user
 └── .github/workflows/deploy.yml
 ```
 
@@ -208,7 +210,7 @@ The whole pipeline is a few hundred points × a 9-row lookup. Porting it to a pu
 - makes results instant on "End trip";
 - makes the logic unit-testable with fixtures, which is how the bugs above get fixed and stay fixed.
 
-Python stays around only as `scripts/export_history.py` for the one-off migration of the 2022 data (if the database dump still exists).
+No Python remains in the new project. The 2022 data is a CSV and is imported by the app itself (see §3).
 
 ### Module-by-module spec
 
@@ -253,7 +255,7 @@ Geolocation requires HTTPS, which GitHub Pages provides. The only obstacle is th
 
 - Trips are stored in the browser (IndexedDB via Dexie) on the phone that recorded them.
 - Export / import as JSON (and optionally GPX) so data can be moved between devices or backed up.
-- 2022 history: run `scripts/export_history.py` once against the old database dump to write one JSON file per 2022 user in the app's export format; each person imports their own file through the normal import button. Nothing user-specific is committed to the repo.
+- 2022 data: the history page gets an "Import 2022 CSV" button that reads `DATA.csv` directly in the browser. Format found: columns `mode_type_id, tot_mj, tot_co2, trip_id, user_id, geometry, start_time, date, length, length`; geometry is hex WKB (`0102000000…`, LineString, no SRID) in LV95 (EPSG:2056); `start_time` like `21.12.22 22:07`; the two `length` columns are metres and km. There is **no end time**, so legs from 2022 have unknown duration: distance, MJ and CO₂ are recomputed with the refreshed factors and the corrected rush-hour rule (from `start_time`), travel time is shown as "n/a" for those trips. The importer asks which `user_id` to import (1 Dario, 2 Luca, 3 Leo, 4 Raúl) and skips rows already imported (key: `trip_id` + `user_id` + row index). The CSV is never committed to the repo.
 - "Multi-device history" would mean seeing on a laptop the trips recorded on a phone, automatically. Not needed; export/import covers a phone change.
 - Cost: zero. Setup: one workflow file and one repo setting.
 
@@ -309,32 +311,34 @@ No shared or multi-device history is needed, so there is nothing for a backend t
 
 ## 4. Phased roadmap
 
-### Phase 0 — Hygiene (½ day)
+Branching: each phase is committed on its own branch, branched from the previous phase's branch. Nothing is pushed until explicitly requested.
+
+### Phase 0 — Hygiene (½ day) — branch `refactor/00-hygiene`
 - Move `index.html`, `feedback.html`, `about.html`, `js/`, `css/`, `py/` into `legacy/`.
 - Add `.gitignore` (node_modules, dist, .env), `.env.example` with `VITE_MAPBOX_TOKEN=`, `LICENSE` stays.
 - Create the Mapbox account/token and restrict its URLs (5 minutes, needed from Phase 2 on).
 - Strip credentials placeholder from `legacy/py/importToDB.py` into an `.env.example` note.
 - Done when: repo root contains only `legacy/`, `docs/`, `README.md`, `LICENSE`.
 
-### Phase 1 — Scaffold + calculation engine (1–2 days)
+### Phase 1 — Scaffold + calculation engine (1–2 days) — branch `refactor/01-scaffold-engine`
 - `npm create vite@latest` (React + TypeScript), add Tailwind, Vitest, Dexie, zustand, react-router, `mapbox-gl`, `react-map-gl`, `@turf/distance`, `@turf/length`, `@turf/bbox`.
 - Implement `src/lib/*` per §2 with tests. Fill `factors.ts` from the refreshed mobitool values in `docs/mobitool-factors.md`.
 - Done when: `npm test` passes and a fixture trip produces km / MJ / CO₂ / time that you have hand-checked once.
 
-### Phase 2 — Tracking page (1–2 days)
+### Phase 2 — Tracking page (1–2 days) — branch `refactor/02-tracking`
 - `MapView` (Mapbox style, token, `GeolocateControl` with `trackUserLocation`, `NavigationControl`), `TraceLayer` fed by a GeoJSON source that grows with each fix.
 - `useGeolocation` hook (single watcher, cleanup on stop), `ModePicker`, `TrackingBadge`.
 - Persist in-progress trip to IndexedDB on every fix; resume on reload.
 - End trip → run engine → save `Trip` + `Tripleg[]` → show summary sheet.
 - Done when: a real walk around the block recorded on a phone shows a plausible distance and survives a tab reload mid-trip.
 
-### Phase 3 — History page + storage (1 day)
+### Phase 3 — History page + storage + 2022 import (1 day) — branch `refactor/03-history`
 - `TripStore` interface + Dexie implementation; date picker; map with mode-coloured legs (one source, data swapped per query, `fitBounds` to the day); totals table; per-mode breakdown.
 - JSON export/import.
-- `scripts/export_history.py`: reads the 2022 PostGIS dump (schema: `tripleg(user_id, mode_type_id, trip_id, tot_mj, tot_co2, start_time, date, end_time, geometry)` in EPSG:2056) and writes one file per user in the app's JSON export format, geometry reprojected to WGS84, MJ/CO₂ recomputed with the refreshed factors.
+- `lib/lv95.ts` + `lib/legacyCsv.ts` with tests against a synthetic WKB fixture (not real data); `LegacyImport` component on the history page.
 - Done when: yesterday's recorded trip appears on the history page with correct totals; empty days show a message.
 
-### Phase 4 — Deploy + PWA (½ day)
+### Phase 4 — Deploy + PWA (½ day) — branch `refactor/04-deploy`
 - `vite.config.ts` base path, workflow file, Pages setting, `MAPBOX_TOKEN` repo secret, `vite-plugin-pwa` with manifest + icons (exclude Mapbox tile requests from the service-worker cache).
 - Update `README.md`: live URL, how to run locally, how the numbers are computed, known mobile limitations.
 - Done when: the app installs to a phone home screen from the GitHub Pages URL and tracks a trip.

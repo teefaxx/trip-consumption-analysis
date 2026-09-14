@@ -355,7 +355,7 @@ Branching: each phase is committed on its own branch, branched from the previous
 
 Things only the repository owner can do. Ticked off as they are done.
 
-- [ ] **Decide where the refactor branches live.** `teefaxx/trip-consumption-analysis` is public, so pushing there publishes the branches. Either switch the repo to private (GitHub → Settings → General → Danger Zone → Change visibility; it can be made public again when the rewrite is ready), or create a separate private repo and add it as a second remote. Until then the branches stay local.
+- [x] **Decide where the refactor branches live.** Decided 2026-09-14: pushed to the public repo `teefaxx/trip-consumption-analysis` as `refactor/*` branches. `main` still holds the legacy app until the rewrite is merged.
 - [ ] **Create a Mapbox public token** (`pk.…`) at account.mapbox.com, restrict its allowed URLs to `http://localhost:*` and the future GitHub Pages origin, and save it locally in `.env` as `VITE_MAPBOX_TOKEN=pk.…` (see `.env.example`). Without it the app runs but shows a placeholder instead of the map.
 - [ ] **Add the token as a repository secret** named `MAPBOX_TOKEN` (Settings → Secrets and variables → Actions) before Phase 4, so the GitHub Actions build can embed it.
 - [ ] **Test tracking on a phone.** `navigator.geolocation` needs HTTPS, so real-GPS testing happens after the Phase 4 deploy. On the laptop the dev server works over plain HTTP at `http://localhost:5173/trip-consumption-analysis/#/`.

@@ -9,8 +9,8 @@ import { parseWkbLineStringHex } from './wkb'
 import { zurichLocalToEpoch } from './zurichTime'
 
 export interface ParseLegacyCsvOptions {
-  /** Only rows for this `user_id` are imported. */
-  userId: number
+  /** Only rows for this `user_id` are imported; omit to import every user's rows. */
+  userId?: number
   profileName: string
   factors?: readonly EmissionFactor[]
   tz?: string
@@ -128,7 +128,7 @@ export function parseLegacyCsv(
     const rowNumber = i // 1-based data row number (header excluded)
     const cols = splitCsvLine(lines[i])
     const userId_ = Number(cols[userIdIdx])
-    if (userId_ !== userId) continue
+    if (userId !== undefined && userId_ !== userId) continue
 
     rows.push({
       modeTypeId: Number(cols[modeTypeIdIdx]),
@@ -141,12 +141,12 @@ export function parseLegacyCsv(
     })
   }
 
-  // Group consecutive rows (of this user) by trip_id, in file order.
+  // Group consecutive rows by (user_id, trip_id), in file order.
   const tripGroups: LegacyRow[][] = []
   for (const row of rows) {
     const currentGroup = tripGroups[tripGroups.length - 1]
     const currentTripId = currentGroup?.[0]?.tripId
-    if (currentGroup && currentTripId === row.tripId) {
+    if (currentGroup && currentTripId === row.tripId && currentGroup[0].userId === row.userId) {
       currentGroup.push(row)
     } else {
       tripGroups.push([row])
@@ -221,7 +221,7 @@ export function parseLegacyCsv(
     const tripId = group[0].tripId
     const totals = summarize(legs)
     const trip: Trip = {
-      id: `legacy-2022-u${userId}-t${tripId}`,
+      id: `legacy-2022-u${group[0].userId}-t${tripId}`,
       profileName,
       startT: legs[0].startT,
       endT: legs[legs.length - 1].startT,

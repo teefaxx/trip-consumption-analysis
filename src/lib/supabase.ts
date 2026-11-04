@@ -1,4 +1,5 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
+import type { Trip } from './types'
 import type { RemoteTripRow, RemoteTripWrite, TripRemote } from '../storage/sync'
 
 const url = import.meta.env.VITE_SUPABASE_URL
@@ -70,4 +71,23 @@ export function createSupabaseRemote(client: SupabaseClient, userId: string): Tr
       return data.length === 0
     },
   }
+}
+
+/**
+ * The shared, read-only sample trips (table `sample_trips`, see
+ * supabase/migrations/0002_sample_trips.sql). Returns [] when the table
+ * does not exist yet, so a missing migration never breaks sign-in.
+ */
+export async function fetchSampleTrips(client: SupabaseClient): Promise<Trip[]> {
+  const { data, error } = await client
+    .from('sample_trips')
+    .select('id,data')
+    .order('sort_order', { ascending: true })
+  if (error) {
+    console.warn('Sample trips unavailable:', error.message)
+    return []
+  }
+  return (data as { id: string; data: Trip }[])
+    .filter((row) => row.data && Array.isArray(row.data.legs))
+    .map((row) => ({ ...row.data, id: row.id }))
 }

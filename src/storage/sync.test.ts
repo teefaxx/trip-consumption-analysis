@@ -141,7 +141,7 @@ describe('syncDatabase', () => {
   it('seeds a brand-new account once, and not an existing one', async () => {
     const { remote, rows } = fakeRemote()
     const name = freshDb()
-    const seed = () => [{ ...trip('sample-1'), source: 'sample' as const }]
+    const seed = async () => [{ ...trip('sample-1'), source: 'sample' as const }]
     await syncDatabase(name, remote, { seed })
     expect(rows.has('sample-1')).toBe(true)
 

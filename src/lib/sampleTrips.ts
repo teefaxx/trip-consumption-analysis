@@ -87,7 +87,9 @@ const MODE_SWITCH_PAUSE_MS = 3 * 60_000
 function traceLeg(leg: LegSpec, startT: number): Trackpoint[] {
   const points: Trackpoint[] = []
   let t = startT
-  const push = ([lat, lon]: LatLon) => points.push({ t, lat, lon, acc: 8, mode: leg.mode })
+  const round6 = (x: number) => Math.round(x * 1e6) / 1e6
+  const push = ([lat, lon]: LatLon) =>
+    points.push({ t: Math.round(t), lat: round6(lat), lon: round6(lon), acc: 8, mode: leg.mode })
   push(leg.route[0])
   for (let i = 1; i < leg.route.length; i++) {
     const [aLat, aLon] = leg.route[i - 1]
@@ -123,4 +125,36 @@ export function generateSampleTrips(profileName: string, now = Date.now()): Trip
     const trip = analyzeTrip(points, { profileName })
     return { ...trip, id: `${SAMPLE_ID_PREFIX}${index + 1}`, source: 'sample' as const }
   })
+}
+
+const DAY_MS = 86_400_000
+
+/**
+ * Shifts sample trips (stored with fixed dates) by whole days so the most
+ * recent one falls on yesterday, and stamps them for the current account.
+ * Ids get the sample prefix so they can be badged and bulk-removed.
+ */
+export function prepareSampleTrips(trips: Trip[], profileName: string, now = Date.now()): Trip[] {
+  if (trips.length === 0) return []
+  const latest = Math.max(...trips.map((t) => t.startT))
+  const yesterday = addDaysIso(localDate(now), -1)
+  const [ly, lm, ld] = localDate(latest).split('-').map(Number)
+  const [yy, ym, yd] = yesterday.split('-').map(Number)
+  const days = Math.round((Date.UTC(yy, ym - 1, yd) - Date.UTC(ly, lm - 1, ld)) / DAY_MS)
+  const shift = days * DAY_MS
+
+  return trips.map((trip) => ({
+    ...trip,
+    id: trip.id.startsWith(SAMPLE_ID_PREFIX) ? trip.id : `${SAMPLE_ID_PREFIX}${trip.id}`,
+    source: 'sample' as const,
+    profileName,
+    startT: trip.startT + shift,
+    endT: trip.endT + shift,
+    legs: trip.legs.map((leg) => ({
+      ...leg,
+      startT: leg.startT + shift,
+      endT: leg.endT + shift,
+      points: leg.points.map((p) => ({ ...p, t: p.t + shift })),
+    })),
+  }))
 }

@@ -24,9 +24,11 @@ Everything here fits the free tiers of Supabase and GitHub. Takes about 15 minut
   out deletes that account's local copy (after uploading pending changes). Trips recorded
   while signed out stay in the device-only database; after signing in, the app asks once
   whether to add them to the account.
-- **Sample data:** lives in Supabase, in the read-only `sample_trips` table (edit it in
-  the Table Editor). A brand-new account gets a copy, re-dated to yesterday and the day
-  before, badged "Sample" and removable from the Account page.
+- **Sample data:** lives in Supabase, in the `sample_trips` table, which only the
+  project owner can change (Table Editor or SQL). The History page shows it to
+  everyone, signed in or not, re-dated to yesterday and the day before, badged
+  "Sample", without a Delete button. It is never stored in anyone's trips. Users can
+  hide it with "Show sample trips" on History.
 
 ## 1. Create the Supabase project
 

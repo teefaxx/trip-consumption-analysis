@@ -1,10 +1,9 @@
 -- Trip Consumption Analysis — shared sample trips.
 -- Run once in the Supabase SQL editor, after 0001_trips.sql. Safe to re-run.
 --
--- Every user can read these (signed in or not); nobody can change them
--- through the app. A brand-new account gets a copy of them in its own
--- trips (re-dated to the last two days), and "Add sample trips" on the
--- Account page copies them again.
+-- Shown to everyone on the History page, signed in or not, re-dated to
+-- yesterday and the day before. Read-only: nobody can change or delete them
+-- through the app; only the project owner can (here or in the Table Editor).
 --
 -- To change the sample data, edit rows here or in Supabase → Table Editor →
 -- sample_trips (the `data` column holds the trip JSON exactly as the app

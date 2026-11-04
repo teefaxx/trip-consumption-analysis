@@ -31,7 +31,7 @@ function GitHubMark() {
   )
 }
 
-type Dialog = 'signOutPending' | 'deleteAccount' | 'removeSamples' | null
+type Dialog = 'signOutPending' | 'deleteAccount' | null
 
 export default function AccountPage() {
   const navigate = useNavigate()
@@ -49,8 +49,6 @@ export default function AccountPage() {
     signOut,
     deleteAccount,
     syncNow,
-    addSampleTrips,
-    removeSampleTrips,
     addDeviceTrips,
     countDeviceTrips,
   } = useAccountStore.getState()
@@ -115,8 +113,7 @@ export default function AccountPage() {
         <Card title="Sign in">
           <p className="text-sm text-gray-600">
             Sign in with GitHub to keep your trips in your account and see them on all your
-            devices. A new account starts with a few sample trips so you can explore the History
-            page.
+            devices.
           </p>
           <button
             type="button"
@@ -187,8 +184,8 @@ export default function AccountPage() {
           </button>
         </Card>
 
-        <Card title="Trips">
-          {deviceTrips > 0 && (
+        {deviceTrips > 0 && (
+          <Card title="Trips">
             <button
               type="button"
               disabled={busy}
@@ -202,31 +199,8 @@ export default function AccountPage() {
             >
               Add {deviceTrips} trip{deviceTrips === 1 ? '' : 's'} recorded on this device
             </button>
-          )}
-          <button
-            type="button"
-            disabled={busy}
-            onClick={() =>
-              void run(async () => {
-                const n = await addSampleTrips()
-                return n > 0
-                  ? `Added ${n} sample trips — see yesterday and the day before on History.`
-                  : 'No sample trips are available right now.'
-              })
-            }
-            className={buttonClass}
-          >
-            Add sample trips
-          </button>
-          <button
-            type="button"
-            disabled={busy}
-            onClick={() => setDialog('removeSamples')}
-            className={buttonClass}
-          >
-            Remove sample trips
-          </button>
-        </Card>
+          </Card>
+        )}
 
         <Card title="Account">
           <button
@@ -281,21 +255,6 @@ export default function AccountPage() {
           message={`${pending} change${pending === 1 ? ' has' : 's have'} not been uploaded yet (are you offline?). Signing out now loses ${pending === 1 ? 'it' : 'them'}.`}
           confirmLabel="Sign out"
           onConfirm={() => void handleSignOut(true)}
-          onCancel={() => setDialog(null)}
-        />
-      )}
-      {dialog === 'removeSamples' && (
-        <ConfirmDialog
-          title="Remove sample trips?"
-          message="Removes the generated sample trips from your account. Your own trips are not affected."
-          confirmLabel="Remove"
-          onConfirm={() =>
-            void run(async () => {
-              setDialog(null)
-              const n = await removeSampleTrips()
-              return `Removed ${n} sample trip${n === 1 ? '' : 's'}.`
-            })
-          }
           onCancel={() => setDialog(null)}
         />
       )}

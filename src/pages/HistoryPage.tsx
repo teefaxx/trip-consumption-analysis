@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import MapView from '../components/MapView'
 import DayLegsLayer from '../components/history/DayLegsLayer'
 import DayTotals from '../components/history/DayTotals'
@@ -9,20 +9,36 @@ import { useTripsOnDate } from '../hooks/useTripsOnDate'
 import { addDaysIso, localDate, type Trip } from '../lib'
 import { tripStore } from '../storage/dexieStore'
 import { useAccountStore } from '../store/accountStore'
+import { useSampleStore } from '../store/sampleStore'
 
 export default function HistoryPage() {
   const [dateISO, setDateISO] = useState(() => localDate(Date.now()))
-  const { trips, loading, reload } = useTripsOnDate(dateISO)
+  const { trips: ownTrips, loading, reload } = useTripsOnDate(dateISO)
+  const samples = useSampleStore((s) => s.samples)
+  const showSamples = useSampleStore((s) => s.showSamples)
+  const setShowSamples = useSampleStore((s) => s.setShowSamples)
+
+  // The shared sample trips are shown next to the user's own (read-only).
+  const trips = useMemo(() => {
+    if (!showSamples) return ownTrips
+    const daySamples = samples.filter((t) => localDate(t.startT) === dateISO)
+    return [...ownTrips, ...daySamples].sort((a, b) => a.startT - b.startT)
+  }, [ownTrips, samples, showSamples, dateISO])
+  const latestSampleDate = useMemo(
+    () => (samples.length ? localDate(Math.max(...samples.map((t) => t.startT))) : null),
+    [samples],
+  )
   const [bounds, setBounds] = useState<{ min: string; max: string } | null>(null)
   const [deleteError, setDeleteError] = useState<string | null>(null)
   const dataVersion = useAccountStore((s) => s.dataVersion)
 
   // Date-input min/max, recomputed whenever the stored data changes
-  // (account switch, sync).
+  // (account switch, sync) or the samples are shown/hidden.
   useEffect(() => {
     let cancelled = false
-    void tripStore.listAllTrips().then((all) => {
+    void tripStore.listAllTrips().then((own) => {
       if (cancelled) return
+      const all = showSamples ? [...own, ...samples] : own
       if (all.length === 0) {
         setBounds(null)
         return
@@ -33,7 +49,7 @@ export default function HistoryPage() {
     return () => {
       cancelled = true
     }
-  }, [dataVersion])
+  }, [dataVersion, samples, showSamples])
 
   const handleDelete = async (tripId: string) => {
     setDeleteError(null)
@@ -47,11 +63,12 @@ export default function HistoryPage() {
 
   const handleImportComplete = (imported: Trip[]) => {
     reload()
-    if (trips.length === 0 && imported.length > 0) {
+    if (ownTrips.length === 0 && imported.length > 0) {
       setDateISO(localDate(imported[0].startT))
     }
     // Bounds may have widened (new dates imported) — recompute lazily.
-    void tripStore.listAllTrips().then((all) => {
+    void tripStore.listAllTrips().then((own) => {
+      const all = showSamples ? [...own, ...samples] : own
       if (all.length === 0) return
       const dates = all.map((t) => localDate(t.startT)).sort()
       setBounds({ min: dates[0], max: dates[dates.length - 1] })
@@ -108,8 +125,17 @@ export default function HistoryPage() {
         )}
 
         {!loading && trips.length === 0 && (
-          <div className="rounded-2xl border border-gray-200 bg-white p-4 text-center text-sm text-gray-500">
+          <div className="flex flex-col items-center gap-2 rounded-2xl border border-gray-200 bg-white p-4 text-center text-sm text-gray-500">
             No trips on this day
+            {showSamples && latestSampleDate && latestSampleDate !== dateISO && (
+              <button
+                type="button"
+                onClick={() => setDateISO(latestSampleDate)}
+                className="text-sm font-semibold text-gray-900 underline underline-offset-2"
+              >
+                See the sample trips
+              </button>
+            )}
           </div>
         )}
 
@@ -118,6 +144,23 @@ export default function HistoryPage() {
             <DayTotals trips={trips} />
             <TripList trips={trips} onDelete={(id) => void handleDelete(id)} />
           </>
+        )}
+
+        {samples.length > 0 && (
+          <label className="flex items-center justify-between gap-3 rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700">
+            <span>
+              Show sample trips
+              <span className="block text-xs text-gray-500">
+                Example data for everyone — read-only, not part of your trips.
+              </span>
+            </span>
+            <input
+              type="checkbox"
+              checked={showSamples}
+              onChange={(e) => setShowSamples(e.target.checked)}
+              className="h-5 w-5 accent-gray-900"
+            />
+          </label>
         )}
 
         <DataPanel onImportComplete={handleImportComplete} />

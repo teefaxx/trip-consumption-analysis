@@ -1,5 +1,5 @@
 import type { Trip } from '../lib/types'
-import { getDatabase, nextSeq, toStored, type OutboxEntry } from './dexieStore'
+import { getDatabase, toStored, type OutboxEntry } from './dexieStore'
 
 /** One row of the `trips` table as the server returns it. */
 export interface RemoteTripRow {
@@ -22,8 +22,6 @@ export interface TripRemote {
   upsert(rows: RemoteTripWrite[]): Promise<void>
   /** Rows with `updated_at >= since` (all rows when `since` is null), oldest first. */
   fetchSince(since: string | null): Promise<RemoteTripRow[]>
-  /** True when the account has never stored anything (not even a deletion). */
-  isEmpty(): Promise<boolean>
 }
 
 export interface SyncResult {
@@ -34,14 +32,8 @@ export interface SyncResult {
   failedMessage: string | null
 }
 
-export interface SyncOptions {
-  /** Trips to add once to a brand-new account (sample data). */
-  seed?: () => Promise<Trip[]>
-}
-
 const PUSH_CHUNK = 10
 const WATERMARK_KEY = 'lastPulledAt'
-const INITIALIZED_KEY = 'initialized'
 /**
  * The pull asks for rows changed since the last watermark minus this
  * margin, so a row committed slightly out of timestamp order is still
@@ -70,9 +62,8 @@ function errorMessage(err: unknown): string {
 
 /**
  * Two-way sync of one local account database with the server:
- * 1. (first run on this device) seed sample trips if the account is brand new,
- * 2. push the outbox (local saves/deletes), then
- * 3. pull everything changed on the server since the last pull.
+ * 1. push the outbox (local saves/deletes), then
+ * 2. pull everything changed on the server since the last pull.
  *
  * Trips never change after they are saved, so there are no real conflicts:
  * a trip either exists or has been deleted. A pending local change always
@@ -81,26 +72,10 @@ function errorMessage(err: unknown): string {
 export async function syncDatabase(
   dbName: string,
   remote: TripRemote,
-  { seed }: SyncOptions = {},
 ): Promise<SyncResult> {
   const db = getDatabase(dbName)
 
-  // 1. Brand-new account: add sample trips (once per account — the server
-  //    keeps tombstones, so a user who deleted them is no longer "empty").
-  if (!(await db.meta.get(INITIALIZED_KEY))) {
-    if (seed && (await remote.isEmpty())) {
-      const trips = await seed()
-      await db.transaction('rw', db.trips, db.outbox, async () => {
-        for (const trip of trips) {
-          await db.trips.put(toStored(trip))
-          await db.outbox.put({ id: trip.id, op: 'upsert', seq: nextSeq() })
-        }
-      })
-    }
-    await db.meta.put({ key: INITIALIZED_KEY, value: '1' })
-  }
-
-  // 2. Push.
+  // 1. Push.
   const entries = await db.outbox.toArray()
   const writes: { entry: OutboxEntry; row: RemoteTripWrite }[] = []
   for (const entry of entries) {
@@ -154,7 +129,7 @@ export async function syncDatabase(
     }
   })
 
-  // 3. Pull.
+  // 2. Pull.
   const watermark = (await db.meta.get(WATERMARK_KEY))?.value ?? null
   const since = watermark
     ? new Date(new Date(watermark).getTime() - PULL_OVERLAP_MS).toISOString()

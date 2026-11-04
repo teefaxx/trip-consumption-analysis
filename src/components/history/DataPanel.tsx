@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 import Banner from '../Banner'
-import { getProfileName } from '../../storage/profile'
+import { useTripStore } from '../../store/tripStore'
 import { tripStore } from '../../storage/dexieStore'
 import type { TripExport } from '../../storage/TripStore'
 import { parseLegacyCsv, type Trip } from '../../lib'
@@ -44,6 +44,7 @@ export default function DataPanel({ onImportComplete }: DataPanelProps) {
   const [error, setError] = useState<string | null>(null)
   const [legacyUserId, setLegacyUserId] = useState(1)
   const [busy, setBusy] = useState(false)
+  const profileName = useTripStore((s) => s.profileName)
 
   const jsonInputRef = useRef<HTMLInputElement>(null)
   const csvInputRef = useRef<HTMLInputElement>(null)
@@ -87,13 +88,13 @@ export default function DataPanel({ onImportComplete }: DataPanelProps) {
       const text = await file.text()
       const { trips, skippedRows, warnings: parseWarnings } = parseLegacyCsv(text, {
         userId: legacyUserId,
-        profileName: getProfileName(),
+        profileName: profileName,
       })
       const legCount = trips.reduce((n, t) => n + t.legs.length, 0)
       const result = await tripStore.importAll({
         format: 'trip-consumption-analysis/v1',
         exportedAt: new Date().toISOString(),
-        profileName: getProfileName(),
+        profileName: profileName,
         trips,
       })
       setStatus(

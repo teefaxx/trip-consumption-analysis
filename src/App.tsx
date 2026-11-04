@@ -1,8 +1,12 @@
+import { useEffect } from 'react'
 import { createHashRouter, Outlet, RouterProvider } from 'react-router'
 import BottomNav from './components/BottomNav'
+import DeviceTripsPrompt from './components/DeviceTripsPrompt'
 import TrackPage from './pages/TrackPage'
 import HistoryPage from './pages/HistoryPage'
 import AboutPage from './pages/AboutPage'
+import AccountPage from './pages/AccountPage'
+import { useAccountStore } from './store/accountStore'
 
 function Layout() {
   return (
@@ -11,6 +15,7 @@ function Layout() {
         <Outlet />
       </main>
       <BottomNav />
+      <DeviceTripsPrompt />
     </div>
   )
 }
@@ -22,11 +27,16 @@ const router = createHashRouter([
       { path: '/', element: <TrackPage /> },
       { path: '/history', element: <HistoryPage /> },
       { path: '/about', element: <AboutPage /> },
+      { path: '/account', element: <AccountPage /> },
     ],
   },
 ])
 
 function App() {
+  const init = useAccountStore((s) => s.init)
+  useEffect(() => {
+    void init()
+  }, [init])
   return <RouterProvider router={router} />
 }
 

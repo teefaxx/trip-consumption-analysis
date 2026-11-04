@@ -1,10 +1,10 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import MapView from '../components/MapView'
 import TraceLayer from '../components/TraceLayer'
 import TrackingBadge from '../components/TrackingBadge'
 import ModePicker from '../components/ModePicker'
 import TripSummarySheet from '../components/TripSummarySheet'
-import ProfileName, { type ProfileNameHandle } from '../components/ProfileName'
+import AccountButton from '../components/AccountButton'
 import Banner from '../components/Banner'
 import ConfirmDialog from '../components/ConfirmDialog'
 import { useGeolocation } from '../hooks/useGeolocation'
@@ -27,7 +27,6 @@ function describeGeolocationError(err: GeolocationPositionError): string {
 }
 
 export default function TrackPage() {
-  const profileName = useTripStore((s) => s.profileName)
   const status = useTripStore((s) => s.status)
   const mode = useTripStore((s) => s.mode)
   const points = useTripStore((s) => s.points)
@@ -47,8 +46,6 @@ export default function TrackPage() {
   const [tooShort, setTooShort] = useState(false)
   const [summaryTrip, setSummaryTrip] = useState<Trip | null>(null)
 
-  const profileNameRef = useRef<ProfileNameHandle>(null)
-
   // Resume a trip that survived a reload (fixes legacy bug F1).
   useEffect(() => {
     void restoreInProgress()
@@ -61,9 +58,6 @@ export default function TrackPage() {
   )
 
   const handleStartRequest = () => {
-    if (!profileName.trim()) {
-      profileNameRef.current?.open()
-    }
     setModePicker('start')
   }
 
@@ -100,7 +94,7 @@ export default function TrackPage() {
     <div className="flex min-h-0 flex-1 flex-col">
       <header className="flex shrink-0 items-center justify-between border-b border-gray-200 bg-white px-4 py-3">
         <h1 className="text-lg font-semibold text-gray-900">Trip Consumption</h1>
-        <ProfileName ref={profileNameRef} />
+        <AccountButton />
       </header>
 
       <div className="relative min-h-0 flex-1">

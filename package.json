@@ -11,6 +11,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.119.0",
     "@turf/bbox": "^7.4.0",
     "@turf/distance": "^7.4.0",
     "@turf/helpers": "^7.4.0",

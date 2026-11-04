@@ -27,13 +27,18 @@ export default function AboutPage() {
             how much energy and how much CO&#8322; it used, computed from your own GPS
             trace.
           </p>
-          <p>All of this stays on your device — nothing is sent to a server.</p>
+          <p>
+            Without an account, everything stays on your device — nothing is sent to a
+            server. If you sign in with GitHub (optional), your trips are also stored in
+            your account so you can see them on other devices; only you can read them, and
+            you can delete the account with all its trips from the Account page.
+          </p>
         </Section>
 
         <Section title="How to use it">
           <p className="font-medium text-gray-700">Track</p>
           <ol className="list-decimal space-y-1 pl-5">
-            <li>Set your name once, at the top of the Track page.</li>
+            <li>Optionally sign in with GitHub (top of the Track page) to sync your trips.</li>
             <li>Press &ldquo;Start trip&rdquo; and pick a transport mode.</li>
             <li>Changed vehicle? Press &ldquo;Switch mode&rdquo; and pick the new one.</li>
             <li>Press &ldquo;End trip&rdquo; to stop tracking and save the trip.</li>
@@ -107,8 +112,9 @@ export default function AboutPage() {
               itself does not — trips are recorded and computed on the device.
             </li>
             <li>
-              Data is stored only in this browser, on this device. Export it from the
-              History page to keep a backup or move it to another device.
+              Without an account, data is stored only in this browser, on this device.
+              Sign in, or export it from the History page, to keep a backup or move it to
+              another device.
             </li>
           </ul>
         </Section>
@@ -118,7 +124,7 @@ export default function AboutPage() {
             This app was originally built in 2022 for the course
             &ldquo;Geoinformationstechnologien und -analysen&rdquo; at ETH Zürich, by
             Dario De Luca, Luca Dominiak, Leonard Haas and Raúl Lara. It was rewritten in
-            2026 as a browser-only app, with no server or database.
+            2026 as a browser-first app, with optional GitHub sign-in for cloud sync.
           </p>
           <p>
             <a

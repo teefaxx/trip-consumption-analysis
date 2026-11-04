@@ -1,7 +1,6 @@
 import { create } from 'zustand'
 import { analyzeTrip, type ModeId, type Trackpoint, type Trip } from '../lib'
 import { clearInProgress, loadInProgress, saveInProgress, tripStore } from '../storage/dexieStore'
-import { getProfileName, setProfileName as persistProfileName } from '../storage/profile'
 
 export interface LastPosition {
   lat: number
@@ -11,6 +10,7 @@ export interface LastPosition {
 }
 
 export interface TripState {
+  /** Name stamped on new trips: the signed-in account's name, or '' when signed out. */
   profileName: string
   status: 'idle' | 'tracking'
   mode: ModeId | null
@@ -20,7 +20,6 @@ export interface TripState {
   lastPosition: LastPosition | null
   error: string | null
 
-  setProfileName: (name: string) => void
   startTrip: (mode: ModeId) => void
   switchMode: (mode: ModeId) => void
   addPosition: (pos: GeolocationPosition) => void
@@ -41,18 +40,13 @@ const IDLE_TRIP_FIELDS = {
 }
 
 export const useTripStore = create<TripState>()((set, get) => ({
-  profileName: getProfileName(),
+  profileName: '',
   status: 'idle',
   mode: null,
   points: [],
   startedAt: null,
   lastPosition: null,
   error: null,
-
-  setProfileName(name) {
-    persistProfileName(name)
-    set({ profileName: name })
-  },
 
   startTrip(mode) {
     const startedAt = Date.now()

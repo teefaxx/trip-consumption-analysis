@@ -8,25 +8,32 @@ import Banner from '../components/Banner'
 import { useTripsOnDate } from '../hooks/useTripsOnDate'
 import { addDaysIso, localDate, type Trip } from '../lib'
 import { tripStore } from '../storage/dexieStore'
+import { useAccountStore } from '../store/accountStore'
 
 export default function HistoryPage() {
   const [dateISO, setDateISO] = useState(() => localDate(Date.now()))
   const { trips, loading, reload } = useTripsOnDate(dateISO)
   const [bounds, setBounds] = useState<{ min: string; max: string } | null>(null)
   const [deleteError, setDeleteError] = useState<string | null>(null)
+  const dataVersion = useAccountStore((s) => s.dataVersion)
 
-  // Date-input min/max, computed once from whatever is already stored.
+  // Date-input min/max, recomputed whenever the stored data changes
+  // (account switch, sync).
   useEffect(() => {
     let cancelled = false
     void tripStore.listAllTrips().then((all) => {
-      if (cancelled || all.length === 0) return
+      if (cancelled) return
+      if (all.length === 0) {
+        setBounds(null)
+        return
+      }
       const dates = all.map((t) => localDate(t.startT)).sort()
       setBounds({ min: dates[0], max: dates[dates.length - 1] })
     })
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [dataVersion])
 
   const handleDelete = async (tripId: string) => {
     setDeleteError(null)

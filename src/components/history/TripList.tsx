@@ -37,6 +37,11 @@ export default function TripList({ trips, onDelete }: TripListProps) {
           <div className="min-w-0">
             <div className="flex items-center gap-2 text-sm font-semibold text-gray-900">
               {localTime(trip.startT)}
+              {trip.source === 'sample' && (
+                <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800">
+                  Sample
+                </span>
+              )}
               {trip.source === 'legacy-csv' && (
                 <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700">
                   2022 import

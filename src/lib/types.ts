@@ -33,14 +33,15 @@ export interface Trip {
   /**
    * Where this trip came from. `'recorded'` trips are produced by
    * `analyzeTrip` from live GPS fixes; `'legacy-csv'` trips are imported
-   * from the 2022 `tripleg` CSV export by `parseLegacyCsv`. Recorded trips
+   * from the 2022 `tripleg` CSV export by `parseLegacyCsv`; `'sample'` trips
+   * are generated demo data for new accounts (`sampleTrips`). Recorded trips
    * may leave this undefined (treated the same as `'recorded'`).
    *
    * Legacy 2022 rows carry no end time, so their legs' `durationMs` is
    * always 0 and `totals.travelMs` is always 0 — the UI must show travel
    * time as "n/a" for these trips rather than a bogus "0 min".
    */
-  source?: 'recorded' | 'legacy-csv'
+  source?: 'recorded' | 'legacy-csv' | 'sample'
 }
 
 export interface Totals {

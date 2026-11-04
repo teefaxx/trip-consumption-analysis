@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import type { Trip } from '../lib'
 import { tripStore } from '../storage/dexieStore'
+import { useAccountStore } from '../store/accountStore'
 
 export interface UseTripsOnDateResult {
   trips: Trip[]
@@ -17,9 +18,11 @@ export function useTripsOnDate(dateISO: string): UseTripsOnDateResult {
   // effect after the awaited load resolves.
   const [loadedKey, setLoadedKey] = useState<string | null>(null)
 
+  // Account switches and sync pulls change the data underneath us.
+  const dataVersion = useAccountStore((s) => s.dataVersion)
   const reload = useCallback(() => setGeneration((g) => g + 1), [])
 
-  const requestedKey = `${dateISO}:${generation}`
+  const requestedKey = `${dateISO}:${generation}:${dataVersion}`
 
   useEffect(() => {
     let cancelled = false
@@ -31,7 +34,7 @@ export function useTripsOnDate(dateISO: string): UseTripsOnDateResult {
     return () => {
       cancelled = true
     }
-  }, [dateISO, generation, requestedKey])
+  }, [dateISO, generation, dataVersion, requestedKey])
 
   return { trips, loading: loadedKey !== requestedKey, reload }
 }

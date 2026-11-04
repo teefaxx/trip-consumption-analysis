@@ -4,7 +4,7 @@
 
 # Trip Consumption Analysis
 
-**Track your trips by transport mode and see what they cost in energy and CO₂ — entirely on your device.**
+**Track your trips by transport mode and see what they cost in energy and CO₂ — on your device, with optional sync to your account.**
 
 [![CI](https://github.com/teefaxx/trip-consumption-analysis/actions/workflows/deploy.yml/badge.svg)](https://github.com/teefaxx/trip-consumption-analysis/actions/workflows/deploy.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
@@ -23,8 +23,11 @@ A browser-only progressive web app for personal mobility accounting. You start a
 the app follows your GPS, you switch transport mode as you change vehicles, and on
 "End trip" you get the energy use and CO₂ footprint of what you just travelled.
 
-GPS tracking, the calculation and storage all run in the browser. There is no backend
-and nothing leaves the device — the only network calls are for the map tiles.
+GPS tracking, the calculation and storage all run in the browser. Without an account
+nothing leaves the device — the only network calls are for the map tiles. Signing in
+with GitHub is optional: it syncs your trips to your own account (Supabase, protected by
+row-level security) so they survive a lost phone and show up on other devices. New
+accounts start with a few sample trips.
 
 ## Features
 
@@ -33,6 +36,7 @@ and nothing leaves the device — the only network calls are for the map tiles.
 | 🗺️ **Live tracking** | Follow your route on a map, switch transport mode mid-trip, get an instant energy/CO₂ summary when you stop. |
 | 📅 **Day history** | Pick a day and see its legs on the map coloured by mode, with totals and a per-mode breakdown. |
 | 💾 **Local-first** | Trips live in IndexedDB. Export/import as JSON to back up or move between devices. |
+| 🔐 **Optional account** | Sign in with GitHub to sync trips across devices; works offline and uploads when back online. Delete the account and all data any time. |
 | 📥 **Legacy import** | Load the 2022 course dataset straight from its CSV file. |
 | 📱 **Installable PWA** | Offline app shell; the basemap still needs a connection. |
 
@@ -70,7 +74,7 @@ Factors come from the Swiss **mobitool** set (v3.1), full life cycle, per passen
 git clone https://github.com/teefaxx/trip-consumption-analysis.git
 cd trip-consumption-analysis
 npm install
-cp .env.example .env     # set VITE_MAPBOX_TOKEN=pk.…
+cp .env.example .env     # set VITE_MAPBOX_TOKEN=pk.… (Supabase vars optional)
 npm run dev              # http://localhost:5173/trip-consumption-analysis/#/
 ```
 
@@ -85,7 +89,7 @@ npm run dev              # http://localhost:5173/trip-consumption-analysis/#/
 | Command | What it does |
 |---|---|
 | `npm run dev` | Vite dev server with HMR |
-| `npm test` | Vitest unit tests (16 suites, engine + storage + store) |
+| `npm test` | Vitest unit tests (engine + storage + sync + store) |
 | `npm run lint` | oxlint |
 | `npm run build` | Type-check (`tsc -b`) and production build |
 | `npm run preview` | Serve the production build locally |
@@ -97,12 +101,13 @@ Requires Node 22 (the version CI builds with).
 ```
 src/
 ├── lib/          calculation engine — pure TypeScript, unit-tested
-├── storage/      trip persistence (Dexie / IndexedDB)
+├── storage/      trip persistence (Dexie / IndexedDB) and cloud sync
 ├── store/        app state (zustand)
 ├── hooks/        geolocation, day queries
 ├── components/   shared UI
 └── pages/        Track · History · About
-docs/             modernization plan, mobitool factor research
+docs/             modernization plan, mobitool factor research, account setup
+supabase/         database schema + security rules for accounts
 legacy/           the 2022–2023 course project (not deployed)
 ```
 
@@ -126,6 +131,9 @@ requests; CI (lint, type-check, tests, build) runs on every pull request, and a 
   **public** token restricted to `http://localhost:*` and this repo's GitHub Pages
   origin. A URL-restricted public token is expected in a static site's client bundle;
   the restriction is what protects the quota.
+- *(Optional, for accounts)* secrets `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` —
+  see [`docs/accounts-setup.md`](docs/accounts-setup.md). Without them the deployed app
+  is local-only.
 - **Settings → Pages → Source:** GitHub Actions.
 - **Settings → Environments → `github-pages` → Deployment branches and tags:** add a
   rule for `refactor/*` (or choose "No restriction"). GitHub creates this environment

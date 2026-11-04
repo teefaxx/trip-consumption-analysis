@@ -208,8 +208,10 @@ export default function AccountPage() {
             disabled={busy}
             onClick={() =>
               void run(async () => {
-                await addSampleTrips()
-                return 'Sample trips added — see yesterday and the day before on History.'
+                const n = await addSampleTrips()
+                return n > 0
+                  ? `Added ${n} sample trips — see yesterday and the day before on History.`
+                  : 'No sample trips are available right now.'
               })
             }
             className={buttonClass}

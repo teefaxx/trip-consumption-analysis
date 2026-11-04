@@ -37,7 +37,12 @@ jobs:
       - run: npm run lint
       - run: npx tsc --noEmit -p tsconfig.app.json
       - run: npm test
-      - run: npm run build
+      - name: Build
+        run: |
+          if [ -z "$VITE_SUPABASE_URL" ] || [ -z "$VITE_SUPABASE_PUBLISHABLE_KEY" ]; then
+            echo "::warning title=Accounts disabled::SUPABASE_URL or SUPABASE_PUBLISHABLE_KEY is empty, so this build is local-only (no Sign in). Add both as *repository* secrets (Settings > Secrets and variables > Actions > Repository secrets), not environment secrets or variables."
+          fi
+          npm run build
         env:
           VITE_MAPBOX_TOKEN: ${{ secrets.MAPBOX_TOKEN }}
           VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}

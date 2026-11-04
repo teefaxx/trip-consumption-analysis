@@ -10,13 +10,6 @@ interface DataPanelProps {
   onImportComplete: (trips: Trip[]) => void
 }
 
-const LEGACY_USERS = [
-  { id: 1, label: 'Dario' },
-  { id: 2, label: 'Luca' },
-  { id: 3, label: 'Leo' },
-  { id: 4, label: 'Raúl' },
-] as const
-
 function downloadJson(filename: string, data: unknown): void {
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
   const url = URL.createObjectURL(blob)
@@ -42,7 +35,6 @@ export default function DataPanel({ onImportComplete }: DataPanelProps) {
   const [status, setStatus] = useState<string | null>(null)
   const [warnings, setWarnings] = useState<string[]>([])
   const [error, setError] = useState<string | null>(null)
-  const [legacyUserId, setLegacyUserId] = useState(1)
   const [busy, setBusy] = useState(false)
   const profileName = useTripStore((s) => s.profileName)
 
@@ -87,7 +79,6 @@ export default function DataPanel({ onImportComplete }: DataPanelProps) {
     try {
       const text = await file.text()
       const { trips, skippedRows, warnings: parseWarnings } = parseLegacyCsv(text, {
-        userId: legacyUserId,
         profileName: profileName,
       })
       const legCount = trips.reduce((n, t) => n + t.legs.length, 0)
@@ -157,19 +148,9 @@ export default function DataPanel({ onImportComplete }: DataPanelProps) {
       </div>
 
       <div className="flex flex-col gap-2 border-t border-gray-100 pt-3">
-        <label className="text-xs font-medium text-gray-500">Import 2022 CSV — user</label>
-        <select
-          value={legacyUserId}
-          onChange={(e) => setLegacyUserId(Number(e.target.value))}
-          disabled={busy}
-          className="rounded-lg border border-gray-300 px-2 py-1.5 text-sm text-gray-900"
-        >
-          {LEGACY_USERS.map((u) => (
-            <option key={u.id} value={u.id}>
-              {u.id} — {u.label}
-            </option>
-          ))}
-        </select>
+        <label className="text-xs font-medium text-gray-500">
+          2022 course dataset (CSV export)
+        </label>
         <button
           type="button"
           onClick={() => csvInputRef.current?.click()}

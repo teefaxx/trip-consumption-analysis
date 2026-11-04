@@ -1,7 +1,7 @@
 import type { User } from '@supabase/supabase-js'
 import { create } from 'zustand'
-import { createSupabaseRemote, supabase } from '../lib/supabase'
-import { generateSampleTrips, isSampleTrip } from '../lib/sampleTrips'
+import { createSupabaseRemote, fetchSampleTrips, supabase } from '../lib/supabase'
+import { isSampleTrip, prepareSampleTrips } from '../lib/sampleTrips'
 import {
   accountDbName,
   createDexieStore,
@@ -47,7 +47,8 @@ export interface AccountState {
   syncNow: () => Promise<void>
   addDeviceTrips: () => Promise<number>
   dismissDeviceTrips: () => void
-  addSampleTrips: () => Promise<void>
+  /** Copies the shared sample trips into the account; resolves to how many. */
+  addSampleTrips: () => Promise<number>
   removeSampleTrips: () => Promise<number>
   countDeviceTrips: () => Promise<number>
 }
@@ -100,6 +101,11 @@ function cleanAuthParams(): string | null {
   }
   if (changed) window.history.replaceState(window.history.state, '', url.toString())
   return error
+}
+
+async function loadSampleTrips(profileName: string) {
+  if (!supabase) return []
+  return prepareSampleTrips(await fetchSampleTrips(supabase), profileName)
 }
 
 const SYNC_DEBOUNCE_MS = 1500
@@ -219,7 +225,7 @@ export const useAccountStore = create<AccountState>()((set, get) => {
         const result = await syncDatabase(
           accountDbName(account.id),
           createSupabaseRemote(supabase, account.id),
-          { seed: () => generateSampleTrips(account.name) },
+          { seed: () => loadSampleTrips(account.name) },
         )
         if (get().account?.id !== account.id) return
         set({
@@ -297,11 +303,13 @@ export const useAccountStore = create<AccountState>()((set, get) => {
 
     async addSampleTrips() {
       const { account } = get()
-      if (!account) return
-      for (const trip of generateSampleTrips(account.name)) {
+      if (!account) return 0
+      const trips = await loadSampleTrips(account.name)
+      for (const trip of trips) {
         await tripStore.saveTrip(trip)
       }
       bump()
+      return trips.length
     },
 
     async removeSampleTrips() {

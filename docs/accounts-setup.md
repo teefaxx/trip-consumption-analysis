@@ -24,15 +24,17 @@ Everything here fits the free tiers of Supabase and GitHub. Takes about 15 minut
   out deletes that account's local copy (after uploading pending changes). Trips recorded
   while signed out stay in the device-only database; after signing in, the app asks once
   whether to add them to the account.
-- **Sample data:** a brand-new account gets four sample trips (yesterday and the day
-  before, around Zurich), badged "Sample" and removable from the Account page.
+- **Sample data:** lives in Supabase, in the read-only `sample_trips` table (edit it in
+  the Table Editor). A brand-new account gets a copy, re-dated to yesterday and the day
+  before, badged "Sample" and removable from the Account page.
 
 ## 1. Create the Supabase project
 
 1. Sign up at [supabase.com](https://supabase.com) → **New project** (free plan). Pick a
    region close to your users (e.g. Frankfurt / Zurich).
 2. **SQL Editor → New query** → paste `supabase/migrations/0001_trips.sql` → **Run**.
-   (Safe to re-run.)
+   Then the same with `supabase/migrations/0002_sample_trips.sql` (the shared sample
+   trips). Both are safe to re-run.
 3. **Project Settings → API keys**: note the **Project URL** and the **publishable key**
    (`sb_publishable_…`; the legacy `anon` key also works). **Never** use the `secret` /
    `service_role` key in the app.
@@ -62,9 +64,11 @@ receiving your users' sign-in codes.
 
 ## 4. Configure the build
 
-- **GitHub repo → Settings → Secrets and variables → Actions:** add
-  `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY`. The deploy workflow passes them to
-  the build.
+- **GitHub repo → Settings → Secrets and variables → Actions → *Repository secrets*:**
+  add `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY`. Not *environment* secrets (the
+  build job has no environment, so it can't see them) and not *Variables*. If they are
+  missing, the build still succeeds but shows an "Accounts disabled" warning and the app
+  has no Sign in button.
 - **Local dev:** put the same values in `.env` as `VITE_SUPABASE_URL` and
   `VITE_SUPABASE_PUBLISHABLE_KEY` (see `.env.example`).
 

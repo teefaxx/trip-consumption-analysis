@@ -36,7 +36,7 @@ export interface SyncResult {
 
 export interface SyncOptions {
   /** Trips to add once to a brand-new account (sample data). */
-  seed?: () => Trip[]
+  seed?: () => Promise<Trip[]>
 }
 
 const PUSH_CHUNK = 10
@@ -89,7 +89,7 @@ export async function syncDatabase(
   //    keeps tombstones, so a user who deleted them is no longer "empty").
   if (!(await db.meta.get(INITIALIZED_KEY))) {
     if (seed && (await remote.isEmpty())) {
-      const trips = seed()
+      const trips = await seed()
       await db.transaction('rw', db.trips, db.outbox, async () => {
         for (const trip of trips) {
           await db.trips.put(toStored(trip))

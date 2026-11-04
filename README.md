@@ -26,8 +26,8 @@ the app follows your GPS, you switch transport mode as you change vehicles, and 
 GPS tracking, the calculation and storage all run in the browser. Without an account
 nothing leaves the device — the only network calls are for the map tiles. Signing in
 with GitHub is optional: it syncs your trips to your own account (Supabase, protected by
-row-level security) so they survive a lost phone and show up on other devices. New
-accounts start with a few sample trips.
+row-level security) so they survive a lost phone and show up on other devices. A few
+read-only sample trips are shown to everyone on the History page.
 
 ## Features
 

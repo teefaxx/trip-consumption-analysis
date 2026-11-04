@@ -17,7 +17,7 @@ function localTime(t: number, tz = 'Europe/Zurich'): string {
   }).format(new Date(t))
 }
 
-/** One card per trip on the selected day, each with a confirm-guarded delete. */
+/** One card per trip on the selected day, each with a confirm-guarded delete (samples are read-only). */
 export default function TripList({ trips, onDelete }: TripListProps) {
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null)
 
@@ -54,13 +54,15 @@ export default function TripList({ trips, onDelete }: TripListProps) {
               &middot; {trip.totals.kgCo2.toFixed(3)} kg
             </div>
           </div>
-          <button
-            type="button"
-            onClick={() => setPendingDeleteId(trip.id)}
-            className="shrink-0 rounded-lg border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-600 active:bg-red-50"
-          >
-            Delete
-          </button>
+          {trip.source !== 'sample' && (
+            <button
+              type="button"
+              onClick={() => setPendingDeleteId(trip.id)}
+              className="shrink-0 rounded-lg border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-600 active:bg-red-50"
+            >
+              Delete
+            </button>
+          )}
         </div>
       ))}
 

@@ -41,9 +41,6 @@ function fakeRemote() {
         .filter((r) => !since || r.updated_at >= since)
         .sort((a, b) => a.updated_at.localeCompare(b.updated_at))
     },
-    async isEmpty() {
-      return rows.size === 0
-    },
   }
   return {
     remote,
@@ -136,23 +133,6 @@ describe('syncDatabase', () => {
     expect(result).toMatchObject({ pushed: 2, failed: 1, failedMessage: 'Storage limit reached' })
     expect([...rows.keys()].sort()).toEqual(['ok-1', 'ok-2'])
     expect(await pendingCount(name)).toBe(1)
-  })
-
-  it('seeds a brand-new account once, and not an existing one', async () => {
-    const { remote, rows } = fakeRemote()
-    const name = freshDb()
-    const seed = async () => [{ ...trip('sample-1'), source: 'sample' as const }]
-    await syncDatabase(name, remote, { seed })
-    expect(rows.has('sample-1')).toBe(true)
-
-    // The user deletes the sample; a new device must not bring it back.
-    const store = createDexieStore(name, { trackChanges: true })
-    await store.deleteTrip('sample-1')
-    await syncDatabase(name, remote, { seed })
-
-    const other = freshDb()
-    await syncDatabase(other, remote, { seed })
-    expect(await createDexieStore(other).listAllTrips()).toEqual([])
   })
 
   it('ignores malformed server rows', async () => {

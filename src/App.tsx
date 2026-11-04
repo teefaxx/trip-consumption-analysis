@@ -7,6 +7,7 @@ import HistoryPage from './pages/HistoryPage'
 import AboutPage from './pages/AboutPage'
 import AccountPage from './pages/AccountPage'
 import { useAccountStore } from './store/accountStore'
+import { useSampleStore } from './store/sampleStore'
 
 function Layout() {
   return (
@@ -34,9 +35,11 @@ const router = createHashRouter([
 
 function App() {
   const init = useAccountStore((s) => s.init)
+  const loadSamples = useSampleStore((s) => s.load)
   useEffect(() => {
     void init()
-  }, [init])
+    void loadSamples()
+  }, [init, loadSamples])
   return <RouterProvider router={router} />
 }
 

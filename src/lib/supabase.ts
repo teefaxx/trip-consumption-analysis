@@ -61,15 +61,6 @@ export function createSupabaseRemote(client: SupabaseClient, userId: string): Tr
       }
     },
 
-    async isEmpty() {
-      const { data, error } = await client
-        .from('trips')
-        .select('id')
-        .eq('user_id', userId)
-        .limit(1)
-      if (error) throw new Error(error.message)
-      return data.length === 0
-    },
   }
 }
 
